@@ -31,6 +31,7 @@ Proyecto de monitoreo de generación solar
 * RTC para llevar la hora, sincronizar con NTP (github)[https://github.com/radames/NTP_RTC_Sync]
 
 
+# Este es el final del archivo
 
 
 
