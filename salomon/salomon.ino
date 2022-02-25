@@ -13,11 +13,12 @@
 // WiFi Manager
 #include <WiFiManager.h> 
 
+//const char *ssid     = "ZOOROPA";
+//const char *password = "m1lanesas";
 
-const char *ssid     = "ZOOROPA";
-const char *password = "m1lanesas";
 #define NTP_SERVER "time1.google.com"
 #define GMT_TIME_ZONE -3
+
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, NTP_SERVER, GMT_TIME_ZONE * 3600 , 60000);
@@ -27,6 +28,8 @@ char daysOfTheWeek[7][4] = {"DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"};
 
 WiFiManager wifiManager;
 
+
+
 //---- Sincronizo el RTC con el NTP ----//
 void syncTime() {
   
@@ -34,53 +37,41 @@ void syncTime() {
   timeClient.begin();
   timeClient.update();
 
-  long actualTime = timeClient.getEpochTime();
+  long t = timeClient.getEpochTime();
+  Serial.println(t);
   Serial.println(timeClient.getFormattedTime());
-//  rtc.adjust(DateTime(actualTime));
-
+//  rtc.adjust(DateTime(t));
 }
 
 
 
 void setup() {
-    WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
- 
-// Inicio Serial
+  WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP  
+
   Serial.begin(115200);
-#ifndef ESP8266
-  while (!Serial); // wait for serial port to connect. Needed for native USB
-#endif
+//  Serial.setDebugOutput(true);  
+  delay(3000);
+  Serial.println("\nEn Marcha!");
 
+  Serial.println("WiFiMan");
 // Inicio WifiManager
-    bool res;
-    res = wifiManager.autoConnect("Salomon", "rey ");
+  bool res;
+  res = wifiManager.autoConnect("Salomon", "ReySalomon");
 
+  if(!res) {
+    Serial.println("Failed to connect");
+    ESP.restart();
+    while (1) delay(50);
+  }     
 
-    if(!res) {
-        Serial.println("Failed to connect");
-        // ESP.restart();
-    } 
-    else {
-        //if you get here you have connected to the WiFi    
-        Serial.println("connected...yeey :)");
-    }
-
-    
-//
-//// Inicio WiFi
-//  WiFi.begin(ssid, password);
-//  while ( WiFi.status() != WL_CONNECTED ) {
-//    delay ( 500 );
-////    Serial.print ( "." );
-//  }
-//  Serial.println( "Conectado a WiFi " );
+  Serial.println("Conectado a WiFi");
 
 // Inicio NTP
   Serial.println( "Iniciando NTP" );
   timeClient.begin();
 
 //// Inicio RTC
-  Serial.println( "Iniciando RTC" );
+//  Serial.println( "Iniciando RTC" );
 //  if (! rtc.begin()) {
 //    Serial.println("Couldn't find RTC");
 //    Serial.flush();
@@ -91,6 +82,6 @@ void setup() {
 }
 
 void loop() {
-
-
+  Serial.println( "  No hago nada" );
+  delay(1000);
 }
