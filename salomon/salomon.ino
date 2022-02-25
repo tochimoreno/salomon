@@ -1,4 +1,9 @@
-// Sistema de monitoreo de Luxis.
+/*  ------------------------------
+ *  Sistema de monitoreo de Luxis.
+ *  ------------------------------
+ *  Monitoreo remoto de inversores PIP
+ */
+
 
 // WiFi
 #include <ESP8266WiFi.h>
@@ -52,16 +57,19 @@ void syncTime() {
 
 
 void setup() {
+  pinMode(led, OUTPUT);
+  digitalWrite(led,LOW); 
+
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP  
 
+  digitalWrite(led,HIGH); 
   Serial.begin(115200);
 //  Serial.setDebugOutput(true);  
   delay(3000);
   Serial.println("\nEn Marcha!");
-
-
-  pinMode(led, OUTPUT);
   digitalWrite(led,LOW); 
+
+
 
   Serial.println("WiFiMan");
 // Inicio WifiManager
@@ -74,6 +82,7 @@ void setup() {
     while (1) delay(50);
   }     
 
+  digitalWrite(led,HIGH); 
   Serial.println("Conectado a WiFi");
 
 
@@ -89,6 +98,7 @@ void setup() {
 //  }
 
 
+  digitalWrite(led,LOW); 
   Serial.println("Iniciando HTTP server");
   server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
   server.on("/tch", handleTCH);
