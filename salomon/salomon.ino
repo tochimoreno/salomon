@@ -42,7 +42,7 @@ ESP8266WebServer server(80);
 const int led = 2;
 
 //---- Sincronizo el RTC con el NTP ----//
-void syncTime() {
+long syncTime() {
   
   Serial.println( "Sync" );
   timeClient.begin();
@@ -52,6 +52,7 @@ void syncTime() {
   Serial.println(t);
   Serial.println(timeClient.getFormattedTime());
 //  rtc.adjust(DateTime(t));
+  return (t);
 }
 
 
@@ -101,7 +102,6 @@ void setup() {
   digitalWrite(led,LOW); 
   Serial.println("Iniciando HTTP server");
   server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
-  server.on("/tch", handleTCH);
   server.on("/led", handleLed);
   server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call function "handleNotFound"
   server.begin();                           // Actually start the server
@@ -124,12 +124,17 @@ void loop() {
 
 
 void handleRoot() {
-  server.send(200, "text/html", "<h1>Salomon</h1><h2>Solar Monitor</h2><br><form action=\"/led\" method=\"POST\"><input type=\"submit\" value=\"Toggle LED\"></form>");
-  }
+  long t = syncTime();
+  char buf[10];
+  String page;
 
-void handleTCH() {
-  server.send(200, "text/plain", "Tochi genio!");   // Send HTTP status 200 (Ok) and send some text to the browser/client
-}
+  sprintf(buf, "%lu", t); 
+  page = "<h1>Salomon</h1><h2>Solar Monitor</h2><br><p>{t}</p><br><form action=\"/led\" method=\"POST\"><input type=\"submit\" value=\"Toggle LED\"></form>";
+  page.replace("{t}", buf);
+
+  server.send(200, "text/html", page);
+  
+ }
 
 
 void handleLed() {                          // If a POST request is made to URI /LED
