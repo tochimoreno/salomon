@@ -19,8 +19,6 @@
 //#include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>   // Include the WebServer library
 
-//const char *ssid     = "ZOOROPA";
-//const char *password = "m1lanesas";
 
 #define NTP_SERVER "time1.google.com"
 #define GMT_TIME_ZONE -3
@@ -35,6 +33,8 @@ char daysOfTheWeek[7][4] = {"DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"};
 WiFiManager wifiManager;
 
 ESP8266WebServer server(80);
+
+const int led = 2;
 
 //---- Sincronizo el RTC con el NTP ----//
 void syncTime() {
@@ -58,6 +58,10 @@ void setup() {
 //  Serial.setDebugOutput(true);  
   delay(3000);
   Serial.println("\nEn Marcha!");
+
+
+  pinMode(led, OUTPUT);
+  digitalWrite(led,LOW); 
 
   Serial.println("WiFiMan");
 // Inicio WifiManager
@@ -87,6 +91,8 @@ void setup() {
 
   Serial.println("Iniciando HTTP server");
   server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
+  server.on("/tch", handleTCH);
+  server.on("/led", handleLed);
   server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call function "handleNotFound"
   server.begin();                           // Actually start the server
   Serial.println("HTTP server started");
@@ -98,6 +104,7 @@ void setup() {
 //    Serial.flush();
 //    while (1) delay(10);
 //  }
+  digitalWrite(led,HIGH); 
 
 }
 
@@ -107,7 +114,18 @@ void loop() {
 
 
 void handleRoot() {
-  server.send(200, "text/plain", "Salomon, Monitoreo Solar. Luxis");   // Send HTTP status 200 (Ok) and send some text to the browser/client
+  server.send(200, "text/html", "<h1>Salomon</h1><h2>Solar Monitor</h2><br><form action=\"/led\" method=\"POST\"><input type=\"submit\" value=\"Toggle LED\"></form>");
+  }
+
+void handleTCH() {
+  server.send(200, "text/plain", "Tochi genio!");   // Send HTTP status 200 (Ok) and send some text to the browser/client
+}
+
+
+void handleLed() {                          // If a POST request is made to URI /LED
+  digitalWrite(led,!digitalRead(led));      // Change the state of the LED
+  server.sendHeader("Location","/");        // Add a header to respond with a new location for the browser to go to the home page again
+  server.send(303);                         // Send it back to the browser with an HTTP status 303 (See Other) to redirect
 }
 
 void handleNotFound(){
