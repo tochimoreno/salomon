@@ -13,6 +13,12 @@
 // WiFi Manager
 #include <WiFiManager.h> 
 
+// Web Server
+#include <WiFiClient.h>
+//#include <ESP8266WiFiMulti.h> 
+//#include <ESP8266mDNS.h>
+#include <ESP8266WebServer.h>   // Include the WebServer library
+
 //const char *ssid     = "ZOOROPA";
 //const char *password = "m1lanesas";
 
@@ -28,7 +34,7 @@ char daysOfTheWeek[7][4] = {"DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"};
 
 WiFiManager wifiManager;
 
-
+ESP8266WebServer server(80);
 
 //---- Sincronizo el RTC con el NTP ----//
 void syncTime() {
@@ -66,9 +72,24 @@ void setup() {
 
   Serial.println("Conectado a WiFi");
 
-// Inicio NTP
-  Serial.println( "Iniciando NTP" );
-  timeClient.begin();
+
+  Serial.println("Sincronizando Time");
+  syncTime();
+
+  
+//  Serial.println("Iniciando nDNS como salomon.local");
+//  if (MDNS.begin("salomon")) {              // Start the mDNS responder for esp8266.local
+//    Serial.println("mDNS responder started");
+//  } else {
+//    Serial.println("Error setting up MDNS responder!");
+//  }
+
+
+  Serial.println("Iniciando HTTP server");
+  server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
+  server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call function "handleNotFound"
+  server.begin();                           // Actually start the server
+  Serial.println("HTTP server started");
 
 //// Inicio RTC
 //  Serial.println( "Iniciando RTC" );
@@ -78,10 +99,17 @@ void setup() {
 //    while (1) delay(10);
 //  }
 
-  syncTime();
 }
 
 void loop() {
-  Serial.println( "  No hago nada" );
-  delay(1000);
+  server.handleClient();                    // Listen for HTTP requests from clients
+}
+
+
+void handleRoot() {
+  server.send(200, "text/plain", "Salomon, Monitoreo Solar. Luxis");   // Send HTTP status 200 (Ok) and send some text to the browser/client
+}
+
+void handleNotFound(){
+  server.send(404, "text/plain", "404: Not found"); // Send HTTP status 404 (Not Found) when there's no handler for the URI in the request
 }
