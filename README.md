@@ -22,17 +22,16 @@ Proyecto de monitoreo de generación solar
 ## firmware
 * Weemos Di mini (clone)
 * Programado en Arduino IDE
-* Captive Portal para configurar credenciales de WiFi (github)[https://github.com/projetsdiy/ESP8266-Webserver-Tutorials/search?q=wifi-connect-esp8266]
-* Librería InverterOfThings para comunicarse con el inversor (github)[https://github.com/scottwday/InverterOfThings]
+* Captive Portal para configurar credenciales de WiFi [github](https://github.com/projetsdiy/ESP8266-Webserver-Tutorials/search?q=wifi-connect-esp8266)
+* Librería InverterOfThings para comunicarse con el inversor [github](https://github.com/scottwday/InverterOfThings)
 * WebServer para mostrar estado del inversor en vivo en forma local (opcional)
 * Guardar datos en db server
 * Si no hay conexión con server, loguear localmente (SD, csv, json)
 * Subir datos locales el server cuando se restablezca la conexión
-* RTC para llevar la hora, sincronizar con NTP (github)[https://github.com/radames/NTP_RTC_Sync]
+* RTC para llevar la hora, sincronizar con NTP [github](https://github.com/radames/NTP_RTC_Sync)
 
 
-
-
-
+## Referencias:
+* [Revisar](https://github.com/tzapu/WiFiManager)
 
 eof
